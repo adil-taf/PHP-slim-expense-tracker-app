@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="h-full bg-gray-100">
     <head>
-        <title>{% block title %}ExpenseTracker{% endblock %}</title>
+        <meta charset="UTF-8">
+        <title>{% block title %}Expennies{% endblock %}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
     </head>
     <body>
         <div class="container">
-            <h1>Layout</h1>
+            <header class="d-flex flex-wrap justify-content-center py-3 mb-4">
+                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                    <img src="{{ asset('build/images/logo.png') }}" width="64" height="64" alt="ExpenseTracker Logo" />
+                    <span class="fs-1 fw-bold">Expense<span class="text-primary">Tracker</span></span>
+                </a>
+
+                <ul class="nav nav-pills align-items-center">
+                    <li class="nav-item"><a href="#" class="nav-link fw-bold fs-5 active" aria-current="page">Overview</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link fw-bold fs-5" aria-current="page">Transactions</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link fw-bold fs-5" aria-current="page">Categories</a></li>
+                </ul>
+            </header>
         </div>
         <div class="container">
             {% block content %}{% endblock %}

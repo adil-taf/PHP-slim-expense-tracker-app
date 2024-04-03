@@ -10,7 +10,9 @@
         "doctrine/cache": "^2.2",
         "doctrine/migrations": "^3.7",
         "twig/twig": "^3.8",
-        "twig/intl-extra": "^3.8"
+        "twig/intl-extra": "^3.8",
+        "symfony/twig-bridge": "^7.0",
+        "symfony/webpack-encore-bundle": "^1.15"
     },
     "autoload": {
         "psr-4": {
