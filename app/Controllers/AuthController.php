@@ -48,7 +48,6 @@ class AuthController
             echo "Yay! We're all good!";
         } else {
             throw new ValidationException($v->errors());
-            //var_dump($v->errors());
         }
 
         $user = new User();
@@ -61,5 +60,27 @@ class AuthController
         $this->entityManager->flush();
 
         return $response;
+    }
+
+    public function logIn(Request $request, Response $response): Response
+    {
+        $data = $request->getParsedBody();
+
+        $v = new Validator($data);
+
+        $v->rule('required', ['email', 'password']);
+        $v->rule('email', 'email');
+
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+
+        if (! $user || ! password_verify($data['password'], $user->getPassword())) {
+            throw new ValidationException(['password' => ['You have entered an invalid username or password']]);
+        }
+
+        session_regenerate_id();
+
+        $_SESSION['user'] = $user->getId();
+
+        return $response->withHeader('Location', '/')->withStatus(302);
     }
 }
