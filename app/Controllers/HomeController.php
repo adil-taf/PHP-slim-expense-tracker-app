@@ -16,8 +16,8 @@ class HomeController
 
     public function index(Request $request, Response $response): Response
     {
-        //$response->getBody()->write("Hello world!");
-        //return $response;
+        $user = $request->getAttribute('user');
+        var_dump($user?->getId());
         return $this->twig->render($response, 'dashboard.twig');
     }
 }
