@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Contracts\UserInterface;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Id;
@@ -19,7 +20,7 @@ use Doctrine\ORM\Mapping\PreUpdate;
 
 #[Entity, Table('users')]
 #[HasLifecycleCallbacks]
-class User
+class User implements UserInterface
 {
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;

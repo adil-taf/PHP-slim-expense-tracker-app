@@ -13,5 +13,6 @@ return function (App $app) {
     $app->get('/login', [AuthController::class, 'loginView'])->add(GuestMiddleware::class);
     $app->get('/register', [AuthController::class, 'registerView'])->add(GuestMiddleware::class);
     $app->post('/login', [AuthController::class, 'logIn'])->add(GuestMiddleware::class);
-    $app->post('/register', [AuthController::class, 'register'])->add(AuthMiddleware::class);
+    $app->post('/register', [AuthController::class, 'register'])->add(GuestMiddleware::class);
+    $app->post('/logout', [AuthController::class, 'logOut'])->add(AuthMiddleware::class);
 };

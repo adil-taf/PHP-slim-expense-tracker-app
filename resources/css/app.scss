@@ -1,5 +1,4 @@
-$primary: #018EFC;
-
+@import "./variables.scss";
 @import "~bootstrap/scss/bootstrap";
 
 * {
@@ -8,6 +7,11 @@ $primary: #018EFC;
 
 body {
   background-color: #e7ebee;
+}
+
+svg.icon {
+  width: 30px;
+  height: 30px;
 }
 
 .nav-link {
