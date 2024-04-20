@@ -20,6 +20,7 @@ return function (App $app) {
     $app->add(OldFormDataMiddleware::class);
     $app->add(ValidationErrorsMiddleware::class);
     $app->add(StartSessionsMiddleware::class);
+
     $app->addErrorMiddleware(
         (bool) $config->get('display_error_details'),
         (bool) $config->get('log_errors'),
