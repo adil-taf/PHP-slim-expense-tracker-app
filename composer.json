@@ -15,7 +15,8 @@
         "symfony/twig-bridge": "^7.0",
         "symfony/webpack-encore-bundle": "^1.15",
         "symfony/console": "^7.0",
-        "vlucas/valitron": "^1.4"
+        "vlucas/valitron": "^1.4",
+        "slim/csrf": "^1.4"
     },
     "autoload": {
         "psr-4": {
