@@ -4,30 +4,29 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\Table;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
+use App\Entity\Traits\HasTimestamps;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table('categories')]
+#[HasLifecycleCallbacks]
 class Category
 {
+    use HasTimestamps;
+
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;
 
     #[Column]
     private string $name;
-
-    #[Column(name: 'created_at')]
-    private \DateTime $createdAt;
-
-    #[Column(name: 'updated_at')]
-    private \DateTime $updatedAt;
 
     #[ManyToOne(inversedBy: 'categories')]
     private User $user;
@@ -50,33 +49,9 @@ class Category
         return $this->name;
     }
 
-    public function setName(string $name): User
+    public function setName(string $name): Category
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): User
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): User
-    {
-        $this->password = $password;
 
         return $this;
     }
@@ -86,7 +61,7 @@ class Category
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): User
+    public function setCreatedAt(\DateTime $createdAt): Category
     {
         $this->createdAt = $createdAt;
 
@@ -98,21 +73,23 @@ class Category
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTime $updatedAt): User
+    public function setUpdatedAt(\DateTime $updatedAt): Category
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
-    public function getCategories(): ArrayCollection|Collection
+    public function getUser(): User
     {
-        return $this->categories;
+        return $this->user;
     }
 
-    public function addCategory(Category $category): User
+    public function setUser(User $user): Category
     {
-        $this->categories->add($category);
+        $user->addCategory($this);
+
+        $this->user = $user;
 
         return $this;
     }
@@ -122,7 +99,7 @@ class Category
         return $this->transactions;
     }
 
-    public function addTransaction(Transaction $transaction): User
+    public function addTransaction(Transaction $transaction): Category
     {
         $this->transactions->add($transaction);
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Contracts\UserInterface;
+use App\Entity\Traits\HasTimestamps;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Id;
@@ -22,6 +23,8 @@ use Doctrine\ORM\Mapping\PreUpdate;
 #[HasLifecycleCallbacks]
 class User implements UserInterface
 {
+    use HasTimestamps;
+
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;
 
@@ -55,16 +58,6 @@ class User implements UserInterface
     public function getId(): int
     {
         return $this->id;
-    }
-
-    #[PrePersist, PreUpdate]
-    public function updateTimestamps(LifecycleEventArgs $args): void
-    {
-        if (! isset($this->createdAt)) {
-            $this->createdAt = new \DateTime();
-        }
-
-        $this->updatedAt = new \DateTime();
     }
 
     public function getName(): string
