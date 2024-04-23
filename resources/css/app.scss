@@ -1,5 +1,7 @@
 @import "./variables.scss";
 @import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-icons/font/bootstrap-icons";
+@import "~datatables.net-dt/css/jquery.dataTables.css";
 
 * {
   font-family: 'Roboto', sans-serif !important;
@@ -10,8 +12,8 @@ body {
 }
 
 svg.icon {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
 }
 
 .nav-link {
@@ -25,4 +27,11 @@ svg.icon {
   &:hover, &:focus {
     color: #57585A !important;
   }
+}
+
+.content-body {
+  background-color: #FEFEFF;
+  min-height: 500px;
+  border-radius: 1rem;
+  padding: 20px 25px 25px;
 }
