@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\AuthController;
-use App\Controllers\CategoriesController;
+use App\Controllers\CategoryController;
 use App\Controllers\HomeController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
@@ -23,11 +23,11 @@ return function (App $app) {
     $app->post('/logout', [AuthController::class, 'logOut'])->add(AuthMiddleware::class);
 
     $app->group('/categories', function (RouteCollectorProxy $categories) {
-        $categories->get('', [CategoriesController::class, 'index']);
-        $categories->get('/load', [CategoriesController::class, 'load']);
-        $categories->post('', [CategoriesController::class, 'store']);
-        $categories->delete('/{id:[0-9]+}', [CategoriesController::class, 'delete']);
-        $categories->get('/{id:[0-9]+}', [CategoriesController::class, 'get']);
-        $categories->post('/{id:[0-9]+}', [CategoriesController::class, 'update']);
+        $categories->get('', [CategoryController::class, 'index']);
+        $categories->get('/load', [CategoryController::class, 'load']);
+        $categories->post('', [CategoryController::class, 'store']);
+        $categories->delete('/{id:[0-9]+}', [CategoryController::class, 'delete']);
+        $categories->get('/{id:[0-9]+}', [CategoryController::class, 'get']);
+        $categories->post('/{id:[0-9]+}', [CategoryController::class, 'update']);
     })->add(AuthMiddleware::class);
 };
