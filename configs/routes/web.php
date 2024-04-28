@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use App\Controllers\CategoryController;
 use App\Controllers\TransactionController;
 use App\Controllers\HomeController;
+use App\Controllers\ReceiptController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use Slim\App;
@@ -39,5 +40,14 @@ return function (App $app) {
         $transactions->delete('/{id:[0-9]+}', [TransactionController::class, 'delete']);
         $transactions->get('/{id:[0-9]+}', [TransactionController::class, 'get']);
         $transactions->post('/{id:[0-9]+}', [TransactionController::class, 'update']);
+        $transactions->post('/{id:[0-9]+}/receipts', [ReceiptController::class, 'store']);
+        $transactions->get(
+            '/{transactionId:[0-9]+}/receipts/{id:[0-9]+}',
+            [ReceiptController::class, 'download']
+        );
+        $transactions->delete(
+            '/{transactionId:[0-9]+}/receipts/{id:[0-9]+}',
+            [ReceiptController::class, 'delete']
+        );
     })->add(AuthMiddleware::class);
 };

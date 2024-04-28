@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\Table;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table('receipts')]
 class Receipt
@@ -19,6 +19,12 @@ class Receipt
 
     #[Column]
     private string $filename;
+
+    #[Column(name: 'storage_filename')]
+    private string $storageFilename;
+
+    #[Column(name: 'media_type')]
+    private string $mediaType;
 
     #[Column(name: 'created_at')]
     private \DateTime $createdAt;
@@ -31,14 +37,14 @@ class Receipt
         return $this->id;
     }
 
-    public function getFileName(): string
+    public function getFilename(): string
     {
-        return $this->file_name;
+        return $this->filename;
     }
 
-    public function setFileName(string $file_name): Receipt
+    public function setFilename(string $filename): Receipt
     {
-        $this->file_name = $file_name;
+        $this->filename = $filename;
 
         return $this;
     }
@@ -65,6 +71,30 @@ class Receipt
         $transaction->addReceipt($this);
 
         $this->transaction = $transaction;
+
+        return $this;
+    }
+
+    public function getStorageFilename(): string
+    {
+        return $this->storageFilename;
+    }
+
+    public function setStorageFilename(string $storageFilename): Receipt
+    {
+        $this->storageFilename = $storageFilename;
+
+        return $this;
+    }
+
+    public function getMediaType(): string
+    {
+        return $this->mediaType;
+    }
+
+    public function setMediaType(string $mediaType): Receipt
+    {
+        $this->mediaType = $mediaType;
 
         return $this;
     }

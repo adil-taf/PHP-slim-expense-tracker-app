@@ -1,48 +1,60 @@
 const ajax = (url, method = 'get', data = {}, domElement = null) => {
-  method = method.toLowerCase()
+    method = method.toLowerCase()
 
-  let options = {
-      method,
-      headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-      }
-  }
+    let options = {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    }
 
-  const csrfMethods = new Set(['post', 'put', 'delete', 'patch'])
+    const csrfMethods = new Set(['post', 'put', 'delete', 'patch'])
 
-  if (csrfMethods.has(method)) {
-      if (method !== 'post') {
-          options.method = 'post'
+    if (csrfMethods.has(method)) {
+        let additionalFields = {...getCsrfFields()}
 
-          data = {...data, _METHOD: method.toUpperCase()}
-      }
+        if (method !== 'post') {
+            options.method = 'post'
 
-      options.body = JSON.stringify({...data, ...getCsrfFields()})
-  } else if (method === 'get') {
-      url += '?' + (new URLSearchParams(data)).toString();
-  }
+            additionalFields._METHOD = method.toUpperCase()
+        }
 
-  return fetch(url, options).then(response => {
-      if (domElement) {
-          clearValidationErrors(domElement)
-      }
+        if (data instanceof FormData) {
+            for (const additionalField in additionalFields) {
+                data.append(additionalField, additionalFields[additionalField])
+            }
 
-      if (! response.ok) {
-          if (response.status === 422) {
-              response.json().then(errors => {
-                  handleValidationErrors(errors, domElement)
-              })
-          }
-      }
+            delete options.headers['Content-Type'];
 
-      return response
-  })
+            options.body = data
+        } else {
+            options.body = JSON.stringify({...data, ...additionalFields})
+        }
+    } else if (method === 'get') {
+        url += '?' + (new URLSearchParams(data)).toString();
+    }
+
+    return fetch(url, options).then(response => {
+        if (domElement) {
+            clearValidationErrors(domElement)
+        }
+
+        if (! response.ok) {
+            if (response.status === 422) {
+                response.json().then(errors => {
+                    handleValidationErrors(errors, domElement)
+                })
+            }
+        }
+
+        return response
+    })
 }
 
 const get  = (url, data) => ajax(url, 'get', data)
 const post = (url, data, domElement) => ajax(url, 'post', data, domElement)
-const del = (url, data) => ajax(url, 'delete', data)
+const del  = (url, data) => ajax(url, 'delete', data)
 
 function handleValidationErrors(errors, domElement) {
     for (const name in errors) {
@@ -60,32 +72,32 @@ function handleValidationErrors(errors, domElement) {
 }
 
 function clearValidationErrors(domElement) {
-  domElement.querySelectorAll('.is-invalid').forEach(function(element) {
-      element.classList.remove('is-invalid')
+    domElement.querySelectorAll('.is-invalid').forEach(function (element) {
+        element.classList.remove('is-invalid')
 
-      element.parentNode.querySelectorAll('.invalid-feedback').forEach(function(e) {
-          e.remove()
-      })
-  })
+        element.parentNode.querySelectorAll('.invalid-feedback').forEach(function (e) {
+            e.remove()
+        })
+    })
 }
 
 function getCsrfFields() {
-  const csrfNameField  = document.querySelector('#csrfName')
-  const csrfValueField = document.querySelector('#csrfValue')
-  const csrfNameKey    = csrfNameField.getAttribute('name')
-  const csrfName       = csrfNameField.content
-  const csrfValueKey   = csrfValueField.getAttribute('name')
-  const csrfValue      = csrfValueField.content
+    const csrfNameField  = document.querySelector('#csrfName')
+    const csrfValueField = document.querySelector('#csrfValue')
+    const csrfNameKey    = csrfNameField.getAttribute('name')
+    const csrfName       = csrfNameField.content
+    const csrfValueKey   = csrfValueField.getAttribute('name')
+    const csrfValue      = csrfValueField.content
 
-  return {
-      [csrfNameKey]: csrfName,
-      [csrfValueKey]: csrfValue
-  }
+    return {
+        [csrfNameKey]: csrfName,
+        [csrfValueKey]: csrfValue
+    }
 }
 
 export {
-  ajax,
-  get,
-  post,
-  del
+    ajax,
+    get,
+    post,
+    del
 }

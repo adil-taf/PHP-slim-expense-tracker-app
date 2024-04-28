@@ -16,7 +16,9 @@
         "symfony/webpack-encore-bundle": "^1.15",
         "symfony/console": "^7.0",
         "vlucas/valitron": "^1.4",
-        "slim/csrf": "^1.4"
+        "slim/csrf": "^1.4",
+        "league/flysystem": "^3.0",
+        "league/mime-type-detection": "^1.15"
     },
     "autoload": {
         "psr-4": {
