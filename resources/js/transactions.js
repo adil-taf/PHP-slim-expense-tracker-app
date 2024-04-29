@@ -5,15 +5,10 @@ import DataTable from "datatables.net";
 import "../css/transactions.scss"
 
 window.addEventListener("DOMContentLoaded", function () {
-  const newTransactionModal = new Modal(
-    document.getElementById("newTransactionModal")
-  );
-  const editTransactionModal = new Modal(
-    document.getElementById("editTransactionModal")
-  );
-  const uploadReceiptModal = new Modal(
-    document.getElementById("uploadReceiptModal")
-  );
+  const newTransactionModal     = new Modal(document.getElementById('newTransactionModal'))
+  const editTransactionModal    = new Modal(document.getElementById('editTransactionModal'))
+  const uploadReceiptModal      = new Modal(document.getElementById('uploadReceiptModal'))
+  const importTransactionsModal = new Modal(document.getElementById('importTransactionsModal'))
 
   const table = new DataTable("#transactionsTable", {
     serverSide: true,
@@ -191,6 +186,44 @@ window.addEventListener("DOMContentLoaded", function () {
         }
       });
     });
+
+    document.querySelector('.import-transactions-btn').addEventListener('click', function (event) {
+      const formData = new FormData()
+      const button   = event.currentTarget
+      const files    = importTransactionsModal._element.querySelector('input[type="file"]').files
+
+      for (let i = 0; i < files.length; i++) {
+          formData.append('importFile', files[i])
+      }
+
+      button.setAttribute('disabled', true)
+
+      const btnHtml = button.innerHTML
+
+      button.innerHTML = `
+          <div class="spinner-grow spinner-grow-sm text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div class="spinner-grow spinner-grow-sm text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div class="spinner-grow spinner-grow-sm text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+      `
+
+      post(`/transactions/import`, formData, importTransactionsModal._element)
+          .then(response => {
+              button.removeAttribute('disabled')
+              button.innerHTML = btnHtml
+
+              if (response.ok) {
+                  table.draw()
+
+                  importTransactionsModal.hide()
+              }
+          })
+    })
 });
 
 function getTransactionFormData(modal) {

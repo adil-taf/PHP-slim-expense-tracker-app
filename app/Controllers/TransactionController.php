@@ -49,7 +49,7 @@ class TransactionController
               'description' => $transaction->getDescription(),
               'amount'      => $transaction->getAmount(),
               'date'        => $transaction->getDate()->format('d-M-Y H:i'),
-              'category'    => $transaction->getCategory()->getName(),
+              'category'    => $transaction->getCategory()?->getName(),
               'receipts'    => $transaction->getReceipts()->map(fn(Receipt $receipt) => [
                 'name' => $receipt->getFilename(),
                 'id'   => $receipt->getId(),
