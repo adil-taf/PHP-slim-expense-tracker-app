@@ -18,7 +18,8 @@
         "vlucas/valitron": "^1.4",
         "slim/csrf": "^1.4",
         "league/flysystem": "^3.0",
-        "league/mime-type-detection": "^1.15"
+        "league/mime-type-detection": "^1.15",
+        "itsgoingd/clockwork": "^5.2"
     },
     "autoload": {
         "psr-4": {
