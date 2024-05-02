@@ -49,24 +49,33 @@ class TransactionService
         return new Paginator($query);
     }
 
-    public function create(TransactionData $transactionData, User $user): Transaction
-    {
+    public function create(
+        TransactionData $transactionData,
+        User $user,
+        bool $flush = false
+    ): Transaction {
         $transaction = new Transaction();
 
         $transaction->setUser($user);
 
-        return $this->update($transaction, $transactionData);
+        return $this->update($transaction, $transactionData, $flush);
     }
 
-    public function update(Transaction $transaction, TransactionData $transactionData): Transaction
-    {
+    public function update(
+        Transaction $transaction,
+        TransactionData $transactionData,
+        bool $flush = false
+    ): Transaction {
         $transaction->setDescription($transactionData->description);
         $transaction->setAmount($transactionData->amount);
         $transaction->setDate($transactionData->date);
         $transaction->setCategory($transactionData->category);
 
         $this->entityManager->persist($transaction);
-        $this->entityManager->flush();
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
 
         return $transaction;
     }
@@ -76,11 +85,14 @@ class TransactionService
         return $this->entityManager->find(Transaction::class, $id);
     }
 
-    public function delete(int $id): void
+    public function delete(int $id, bool $flush = false): void
     {
         $transaction = $this->entityManager->find(Transaction::class, $id);
 
         $this->entityManager->remove($transaction);
-        $this->entityManager->flush();
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 }

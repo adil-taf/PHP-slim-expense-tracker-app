@@ -73,6 +73,8 @@ class TransactionController
             $request->getParsedBody()
         );
 
+        $flush = true;
+
         $this->transactionService->create(
             new TransactionData(
                 $data['description'],
@@ -80,7 +82,8 @@ class TransactionController
                 new DateTime($data['date']),
                 $data['category']
             ),
-            $request->getAttribute('user')
+            $request->getAttribute('user'),
+            $flush
         );
 
         return $response;
@@ -107,7 +110,9 @@ class TransactionController
 
     public function delete(Request $request, Response $response, array $args): Response
     {
-        $this->transactionService->delete((int) $args['id']);
+        $flush = true;
+
+        $this->transactionService->delete((int) $args['id'], $flush);
 
         return $response;
     }
@@ -124,6 +129,8 @@ class TransactionController
             return $response->withStatus(404);
         }
 
+        $flush = true;
+
         $this->transactionService->update(
             $transaction,
             new TransactionData(
@@ -131,7 +138,8 @@ class TransactionController
                 (float) $data['amount'],
                 new DateTime($data['date']),
                 $data['category']
-            )
+            ),
+            $flush
         );
 
         return $response;
