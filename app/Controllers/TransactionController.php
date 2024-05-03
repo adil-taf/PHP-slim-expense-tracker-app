@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Contracts\EntityManagerServiceInterface;
 use App\Contracts\RequestValidatorFactoryInterface;
 use App\DataObjects\TransactionData;
 use App\Entity\Receipt;
@@ -26,7 +27,8 @@ class TransactionController
         private readonly TransactionService $transactionService,
         private readonly ResponseFormatter $responseFormatter,
         private readonly RequestService $requestService,
-        private readonly CategoryService $categoryService
+        private readonly CategoryService $categoryService,
+        private readonly EntityManagerServiceInterface $entityManagerService
     ) {
     }
 
@@ -73,18 +75,17 @@ class TransactionController
             $request->getParsedBody()
         );
 
-        $flush = true;
-
-        $this->transactionService->create(
+        $transaction = $this->transactionService->create(
             new TransactionData(
                 $data['description'],
                 (float) $data['amount'],
                 new DateTime($data['date']),
                 $data['category']
             ),
-            $request->getAttribute('user'),
-            $flush
+            $request->getAttribute('user')
         );
+
+        $this->entityManagerService->sync($transaction);
 
         return $response;
     }
@@ -110,9 +111,9 @@ class TransactionController
 
     public function delete(Request $request, Response $response, array $args): Response
     {
-        $flush = true;
+        $transaction = $this->transactionService->getById((int) $args['id']);
 
-        $this->transactionService->delete((int) $args['id'], $flush);
+        $this->entityManagerService->delete($transaction, true);
 
         return $response;
     }
@@ -129,17 +130,16 @@ class TransactionController
             return $response->withStatus(404);
         }
 
-        $flush = true;
-
-        $this->transactionService->update(
-            $transaction,
-            new TransactionData(
-                $data['description'],
-                (float) $data['amount'],
-                new DateTime($data['date']),
-                $data['category']
-            ),
-            $flush
+        $this->entityManagerService->sync(
+            $this->transactionService->update(
+                $transaction,
+                new TransactionData(
+                    $data['description'],
+                    (float) $data['amount'],
+                    new DateTime($data['date']),
+                    $data['category']
+                )
+            )
         );
 
         return $response;
