@@ -39,4 +39,20 @@ class EntityManagerService implements EntityManagerServiceInterface
             $this->sync();
         }
     }
+
+    public function clear(?string $entityName = null): void
+    {
+        if ($entityName === null) {
+            $this->entityManager->clear();
+
+            return;
+        }
+
+        $unitOfWork = $this->entityManager->getUnitOfWork();
+        $entities = $unitOfWork->getIdentityMap()[$entityName] ?? [];
+
+        foreach ($entities as $entity) {
+            $this->entityManager->detach($entity);
+        }
+    }
 }

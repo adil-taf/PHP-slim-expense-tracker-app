@@ -6,14 +6,18 @@ namespace App\Services;
 
 use App\Contracts\EntityManagerServiceInterface;
 use App\DataObjects\TransactionData;
+use App\Entity\Transaction;
 use App\Entity\User;
+use Clockwork\Clockwork;
+use Clockwork\Request\LogLevel;
 
 class TransactionImportService
 {
     public function __construct(
         private readonly CategoryService $categoryService,
         private readonly TransactionService $transactionService,
-        private readonly EntityManagerServiceInterface $entityManagerService
+        private readonly EntityManagerServiceInterface $entityManagerService,
+        private readonly Clockwork $clockwork
     ) {
     }
 
@@ -23,6 +27,9 @@ class TransactionImportService
         $categories = $this->categoryService->getAllKeyedByName();
 
         fgetcsv($resource);
+
+        $this->clockwork->log(LogLevel::DEBUG, 'Memory Usage Before: ' . memory_get_usage());
+        $this->clockwork->log(LogLevel::DEBUG, 'Unit of work Before: ' . $this->entityManagerService->getUnitOfWork()->size());
 
         $count     = 1;
         $batchSize = 250;
@@ -41,6 +48,7 @@ class TransactionImportService
 
             if ($count % $batchSize === 0) {
                 $this->entityManagerService->sync();
+                $this->entityManagerService->clear(Transaction::class);
 
                 $count = 1;
             } else {
@@ -50,6 +58,11 @@ class TransactionImportService
 
         if ($count > 1) {
             $this->entityManagerService->sync();
+            //It's safe to clear everything out
+            $this->entityManagerService->clear();
         }
+
+        $this->clockwork->log(LogLevel::DEBUG, 'Memory Usage After: ' . memory_get_usage());
+        $this->clockwork->log(LogLevel::DEBUG, 'Unit of work After: ' . $this->entityManagerService->getUnitOfWork()->size());
     }
 }

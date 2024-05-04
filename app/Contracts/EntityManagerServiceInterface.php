@@ -13,4 +13,6 @@ interface EntityManagerServiceInterface
     public function sync($entity = null): void;
 
     public function delete($entity, bool $sync = false): void;
+
+    public function clear(?string $entityName = null): void;
 }
