@@ -14,16 +14,28 @@ window.addEventListener("DOMContentLoaded", function () {
     serverSide: true,
     ajax: "/transactions/load",
     orderMulti: false,
+    rowCallback: (row, data) => {
+      if (! data.wasReviewed) {
+        row.classList.add('fw-bold')
+      }
+      return row
+    },
     columns: [
       { data: "description" },
       {
-        data: "amount",
-        render: (data) =>
-          new Intl.NumberFormat("en-ES", {
-            style: "currency",
-            currency: "EUR",
-            currencySign: "standard",
-          }).format(data),
+        data: 'amount',
+        render: data => {
+            const amount = new Intl.NumberFormat(
+                'en-ES',
+                {
+                    style: 'currency',
+                    currency: 'EUR',
+                    currencySign: 'standard'
+                }
+            ).format(data)
+
+            return `<span class="${ data > 0 ? 'text-success' : '' }">${ amount }</span>`
+        }
       },
       { data: "category" },
       {
@@ -66,18 +78,32 @@ window.addEventListener("DOMContentLoaded", function () {
       {
         sortable: false,
         data: (row) => `
-                    <div class="d-flex flex-">
-                        <button type="submit" class="btn btn-outline-primary delete-transaction-btn" data-id="${row.id}">
-                            <i class="bi bi-trash3-fill"></i>
-                        </button>
-                        <button class="ms-2 btn btn-outline-primary edit-transaction-btn" data-id="${row.id}">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-                        <button class="ms-2 btn btn-outline-primary open-receipt-upload-btn" data-id="${row.id}">
-                            <i class="bi bi-upload"></i>
-                        </button>
-                    </div>
-                `,
+            <div class="d-flex gap-2">
+            <div>
+                <i class="bi ${ row.wasReviewed ? 'bi-check-circle-fill text-success' : 'bi-check-circle' } toggle-reviewed-btn fs-4" 
+                    role="button" data-id="${ row.id }"></i>
+            </div>
+            <div class="dropdown">
+                <i class="bi bi-gear fs-4" role="button" data-bs-toggle="dropdown"></i>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item open-receipt-upload-btn" href="#" data-id="${ row.id }">
+                            <i class="bi bi-upload"></i> Upload Receipt
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item edit-transaction-btn" href="#" data-id="${ row.id }">
+                            <i class="bi bi-pencil-fill"></i> Edit
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item delete-transaction-btn" href="#" data-id="${ row.id }">
+                            <i class="bi bi-trash3-fill"></i> Delete
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            `,
       },
     ],
   });
@@ -89,6 +115,7 @@ window.addEventListener("DOMContentLoaded", function () {
       const deleteBtn = event.target.closest(".delete-transaction-btn");
       const uploadReceiptBtn = event.target.closest(".open-receipt-upload-btn");
       const deleteReceiptBtn = event.target.closest('.delete-receipt');
+      const toggleReviewedBtn = event.target.closest('.toggle-reviewed-btn')
 
       if (editBtn) {
         const transactionId = editBtn.getAttribute("data-id");
@@ -127,6 +154,14 @@ window.addEventListener("DOMContentLoaded", function () {
                 }
             })
         }
+      }else if (toggleReviewedBtn) {
+        const transactionId = toggleReviewedBtn.getAttribute('data-id')
+
+        post(`/transactions/${ transactionId }/review`).then(response => {
+          if (response.ok) {
+              table.draw()
+          }
+        })
       }
     });
 

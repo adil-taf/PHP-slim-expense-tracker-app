@@ -95,4 +95,9 @@ class TransactionService
             $this->entityManager->flush();
         }
     }
+
+    public function toggleReviewed(Transaction $transaction): void
+    {
+        $transaction->setReviewed(! $transaction->wasReviewed());
+    }
 }
