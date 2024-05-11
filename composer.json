@@ -19,7 +19,8 @@
         "slim/csrf": "^1.4",
         "league/flysystem": "^3.0",
         "league/mime-type-detection": "^1.15",
-        "itsgoingd/clockwork": "^5.2"
+        "itsgoingd/clockwork": "^5.2",
+        "symfony/mailer": "^7.0"
     },
     "autoload": {
         "psr-4": {

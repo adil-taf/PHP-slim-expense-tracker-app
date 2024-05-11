@@ -34,3 +34,12 @@ services:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3306:3306"
+  mailhog:
+    container_name: expense-tracker-mailhog
+    image: mailhog/mailhog
+    restart: always
+    logging:
+      driver: "none"
+    ports:
+      - "8025:8025"
+      - "1025:1025"
