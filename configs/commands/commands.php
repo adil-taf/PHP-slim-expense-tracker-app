@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Commands\MyCommand;
+use App\Commands\GenerateAppKeyCommand;
 
 return [
-  MyCommand::class
+  GenerateAppKeyCommand::class,
 ];

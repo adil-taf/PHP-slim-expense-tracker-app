@@ -9,6 +9,7 @@ $appEnv = $_ENV['APP_ENV'] ?? AppEnvironment::Production->value;
 $appSnakeName = strtolower(str_replace(' ', '_', $_ENV['APP_NAME']));
 
 return [
+    'app_key'               => $_ENV['APP_KEY'] ?? '',
     'app_name'              => $_ENV['APP_NAME'],
     'app_version'           => $_ENV['APP_VERSION'] ?? '1.0',
     'app_environment'       => $appEnv,
