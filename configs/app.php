@@ -12,6 +12,7 @@ return [
     'app_key'               => $_ENV['APP_KEY'] ?? '',
     'app_name'              => $_ENV['APP_NAME'],
     'app_version'           => $_ENV['APP_VERSION'] ?? '1.0',
+    'app_url'               => $_ENV['APP_URL'],
     'app_environment'       => $appEnv,
     'display_error_details' => (bool) ($_ENV['APP_DEBUG'] ?? 0),
     'log_errors'            => true,
