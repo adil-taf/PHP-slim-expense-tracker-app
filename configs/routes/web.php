@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Controllers\AuthController;
 use App\Controllers\CategoryController;
 use App\Controllers\HomeController;
+use App\Controllers\ProfileController;
 use App\Controllers\ReceiptController;
 use App\Controllers\TransactionController;
 use App\Controllers\TransactionImporterController;
@@ -47,6 +48,11 @@ return function (App $app) {
                 [ReceiptController::class, 'delete']
             );
             $transactions->post('/{transaction}/review', [TransactionController::class, 'toggleReviewed']);
+        });
+
+        $group->group('/profile', function (RouteCollectorProxy $profile) {
+            $profile->get('', [ProfileController::class, 'index']);
+            $profile->post('', [ProfileController::class, 'update']);
         });
     })->add(VerifyEmailMiddleware::class)->add(AuthMiddleware::class);
 
