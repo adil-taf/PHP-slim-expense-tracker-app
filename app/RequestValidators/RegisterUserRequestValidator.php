@@ -23,6 +23,7 @@ class RegisterUserRequestValidator implements RequestValidatorInterface
         $v->rule('required', ['name', 'email', 'password', 'confirmPassword']);
         $v->rule('email', 'email');
         $v->rule('equals', 'confirmPassword', 'password')->label('Confirm Password');
+        $v->rule('lengthMin', 'password', '8')->label('Password');
         $v->rule(
             fn($field, $value, $params, $fields) => ! $this->entityManager->getRepository(User::class)->count(
                 ['email' => $value]
