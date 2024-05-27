@@ -24,7 +24,7 @@ class TransactionImportService
     public function importFromFile(string $file, User $user): void
     {
         $resource   = fopen($file, 'r');
-        $categories = $this->categoryService->getAllKeyedByName();
+        $categories = $this->categoryService->getAllKeyedByName($user->getId());
 
         fgetcsv($resource);
 
@@ -39,6 +39,11 @@ class TransactionImportService
             $date     = new \DateTime($date);
             $category = $categories[strtolower($category)] ?? null;
             $amount   = str_replace(['$', ','], '', $amount);
+
+            if ($category) {
+                $this->entityManagerService->persist($category);
+                $this->entityManagerService->persist($category->getUser());
+            }
 
             $transactionData = new TransactionData($description, (float) $amount, $date, $category);
 

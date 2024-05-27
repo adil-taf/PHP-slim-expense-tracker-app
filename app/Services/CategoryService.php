@@ -8,12 +8,15 @@ use App\Contracts\EntityManagerServiceInterface;
 use App\DataObjects\DataTableQueryParams;
 use App\Entity\Category;
 use App\Entity\User;
+use Psr\SimpleCache\CacheInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class CategoryService
 {
-    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerServiceInterface $entityManager,
+        private readonly CacheInterface $cache
+    ) {
     }
 
     public function create(string $name, User $user): Category
@@ -22,7 +25,10 @@ class CategoryService
 
         $category->setUser($user);
 
-        return $this->update($category, $name);
+        $userId = $user->getId();
+        $this->deleteCategoriesKeyedByNameFromCache($userId);
+
+        return $this->update($category, $name, $userId);
     }
 
     public function getPaginatedCategories(DataTableQueryParams $params): Paginator
@@ -51,10 +57,11 @@ class CategoryService
         return $this->entityManager->find(Category::class, $id);
     }
 
-    public function update(Category $category, string $name): Category
+    public function update(Category $category, string $name, int $userId): Category
     {
         $category->setName($name);
 
+        $this->deleteCategoriesKeyedByNameFromCache($userId);
         return $category;
     }
 
@@ -71,8 +78,13 @@ class CategoryService
         return $this->entityManager->getRepository(Category::class)->findBy(['name' => $name])[0] ?? null;
     }
 
-    public function getAllKeyedByName(): array
+    public function getAllKeyedByName(int $userId): array
     {
+        $cacheKey = 'categories_keyed_by_name_' . $userId;
+        if ($this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
         $categories  = $this->entityManager->getRepository(Category::class)->findAll();
         $categoryMap = [];
 
@@ -80,6 +92,19 @@ class CategoryService
             $categoryMap[strtolower($category->getName())] = $category;
         }
 
+        $this->cache->set($cacheKey, $categoryMap);
+
         return $categoryMap;
+    }
+    public function delete(int $userId): Category
+    {
+        $this->deleteCategoriesKeyedByNameFromCache($userId);
+
+        return $category;
+    }
+
+    public function deleteCategoriesKeyedByNameFromCache(int $userId): void
+    {
+        $this->cache->delete('categories_keyed_by_name_' . $userId);
     }
 }

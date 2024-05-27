@@ -50,6 +50,8 @@ class CategoryController
     {
         $this->entityManagerService->delete($category, true);
 
+        $this->categoryService->delete($request->getAttribute('user')->getId());
+
         return $response;
     }
 
@@ -66,7 +68,13 @@ class CategoryController
             $request->getParsedBody()
         );
 
-        $this->entityManagerService->sync($this->categoryService->update($category, $data['name']));
+        $this->entityManagerService->sync(
+            $this->categoryService->update(
+                $category,
+                $data['name'],
+                $request->getAttribute('user')->getId()
+            )
+        );
 
         return $response;
     }

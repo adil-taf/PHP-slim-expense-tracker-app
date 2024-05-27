@@ -9,7 +9,7 @@
         "doctrine/migrations": "^3.5",
         "doctrine/orm": "^2.13",
         "doctrine/cache": "^2.2",
-        "symfony/cache": "^6.1",
+        "symfony/cache": "*",
         "twig/twig": "^3.8",
         "twig/intl-extra": "^3.8",
         "symfony/twig-bridge": "^7.0",
@@ -20,7 +20,9 @@
         "league/flysystem": "^3.0",
         "league/mime-type-detection": "^1.15",
         "itsgoingd/clockwork": "^5.2",
-        "symfony/mailer": "^7.0"
+        "symfony/mailer": "^7.0",
+        "psr/simple-cache": "^3.0",
+        "ext-redis": "*"
     },
     "autoload": {
         "psr-4": {
